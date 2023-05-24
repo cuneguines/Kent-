@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "name": "ass",
+        "space": "Space A",
+        "date": "2023-05-24",
+        "startTime": "10:00",
+        "endTime": "15:00"
+    },
+    {
+        "id": 2,
+        "name": "mic",
+        "space": "Space A",
+        "date": "2023-05-24",
+        "startTime": "11:00",
+        "endTime": "09:00"
+    }
+]
