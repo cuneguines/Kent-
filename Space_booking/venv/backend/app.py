@@ -90,7 +90,7 @@ def add_booking():
     new_endTime=end_datetime
     # Loop through the time difference and insert entries for each interval
     current_time = new_startTime
-    while current_time < new_endTime:
+    while current_time <= new_endTime:
                 next_time = current_time + timedelta(minutes=60)  # Assuming each entry has a duration of 15 minutes
                 
                 # Calculate the difference between current time and next time

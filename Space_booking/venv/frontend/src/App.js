@@ -28,10 +28,7 @@ function App() {
   //const [data, setData] = useState([]);
   console.log(startTime);
   const handleEndTimeChange = (event) => {
-    console.log('hello');
-    fetch('/available-times')
-    .then((response) => response.json())
-    .then((data) => {setAvailableTimes(data);console.log(data);})
+    
     const selectedStartTime = event.target.value;
 
     setStartTime(selectedStartTime);
@@ -54,7 +51,7 @@ function App() {
   }, []); */
 
 //Available start times
-  useEffect(() => {
+  /* useEffect(() => {
     // Filter and calculate available times
     const startTime = new Date();
     startTime.setHours(9, 0, 0); // Set the starting time
@@ -80,7 +77,7 @@ function App() {
     setAvailableTimes(timeSlots);
   }, [bookedTimes]);
 
-
+ */
 
 
   
@@ -180,10 +177,10 @@ function App() {
 
           <label>
             Start Time:
-            <select value={startTime} onFocus={handleEndTimeChange}>
+            <select value={startTime} onChange={handleEndTimeChange}>
 
               <option value="">Select a start time</option>
-              {availableTimes.map(time => (
+              {startTimes.map(time => (
                 <option key={time} value={time}>{time}</option>
               ))}
               {/* Add more options as needed */}
