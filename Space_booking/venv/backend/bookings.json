@@ -1,18 +1,20 @@
 [
     {
-        "id": 1,
-        "name": "ass",
+        "id": 2,
+        "name": "Asha",
         "space": "Space A",
-        "date": "2023-05-24",
-        "startTime": "10:00",
-        "endTime": "15:00"
+        "Date": "2023-05-27",
+        "startTime": "08:00",
+        "endTime": "09:00",
+        "day": "Saturday"
     },
     {
         "id": 2,
-        "name": "mic",
+        "name": "As",
         "space": "Space A",
-        "date": "2023-05-24",
-        "startTime": "11:00",
-        "endTime": "09:00"
+        "date": "2023-05-26",
+        "startTime": "13:00",
+        "endTime": "17:00",
+        "day": "Friday"
     }
 ]

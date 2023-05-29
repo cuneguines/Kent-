@@ -1,28 +1,55 @@
 import React from 'react';
+import axios from 'axios';
+import { FaTrash } from 'react-icons/fa';
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-  const timeSlots = ['8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM'];
+  const timeSlots = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00','14:00','15:00','16:00','17:00'];
+
+  
+
+
 function BookingTable({ bookings }) {
+
+
+  
+  const deleteBooking = async (bookingId) => {
+    try {
+      await axios.delete(`http://127.0.0.1:5000/api/bookings/${bookingId}`);
+      //setBookings(bookings.filter((booking) => booking.id !== bookingId));
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+    }
+  };
+  
+  const isTableEmpty = bookings.length === 0;
+  console.log(bookings);
   return (
     <table style={{ borderCollapse: 'collapse', width: '100%',margintop:'2px',backgroundColor:'#499ca7' }}>
       <thead>
         <tr>
-          <th style={tableHeaderStyle}>ID</th>
-          <th style={tableHeaderStyle}>Name</th>
-          <th style={tableHeaderStyle}>Space</th>
-          <th style={tableHeaderStyle}>Date</th>
-          <th style={tableHeaderStyle}>Start Time</th>
-          <th style={tableHeaderStyle}>End Time</th>
+        <th></th> {/* Empty cell for spacing */}
+          {daysOfWeek.map(day => (
+            <th style={tableHeaderStyle}key={day}>{day}</th>
+          ))}
         </tr>
       </thead>
       <tbody>
-        {bookings.map((booking) => (
-          <tr key={booking.id}>
-            <td style={tableCellStyle}>{booking.id}</td>
-            <td style={tableCellStyle}>{booking.name}</td>
-            <td style={tableCellStyle}>{booking.space}</td>
-            <td style={tableCellStyle}>{booking.date}</td>
-            <td style={tableCellStyle}>{booking.startTime}</td>
-            <td style={tableCellStyle}>{booking.endTime}</td>
+      {timeSlots.map(timeSlot => (
+          <tr key={timeSlot}>
+            <td style={tableCellStyle}>{timeSlot}</td>
+            {daysOfWeek.map(day => {
+              const booking = bookings.find(
+                booking => booking.day === day && booking.startTime === timeSlot
+              );
+              return (
+                
+
+                <td style={tableCellStyle}key={`${day}-${timeSlot}`}>{booking ? booking.name: ''}{booking && (
+                  <FaTrash
+                    onClick={() => deleteBooking(booking.id)}
+                  />
+                )}</td>
+              );
+            })}
           </tr>
         ))}
       </tbody>
