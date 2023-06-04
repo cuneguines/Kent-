@@ -4,14 +4,28 @@ import BookingTable from './components/BookingTable';
 
 import axios from 'axios';
 import { FaTrash } from 'react-icons/fa';
-const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-const timeSlots = ['08:00:00', '09:00:00', '10:00:00', '11:00:00', '12:00:00', '13:00:00', '14:00:00', '15:00:00', '16:00:00', '17:00:00'];
+//const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const timeSlots = ['08:00:00--08:30:00', '08:30:00--09:00:00', '09:00:00 to 09:30:00', '09:30:00 to 10:00:00', '10:00:00 to 10:30:00', '10:30:00 to 11:00:00', '11:00:00 to 11:30:00 ', '11:30:00 to 12:00:00', '12:00:00 to 12:30:00', '12:30:00 to 13:00:00', '13:00:00 to 13:30:00', '13:30:00 to 14:00:00', '14:00:00 to 14:30:00', '14:30:00 to 16:00:00', '15:00:00 to 15:30:00', '15:30:00 to 16:00:00', '16:00:00 to 16:30:00', '16:30:00 to 17:00:00'];
+const daysOfWeek = [];
+const startDate = new Date();
+for (let i = 0; i < 28; i++) {
+  const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+  const formattedDate = new Date(date).toLocaleDateString(undefined, {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit"
+  });
 
+  daysOfWeek.push(formattedDate);
+  console.log(formattedDate);
+}
 
 function App() {
 
 
-  const startTimes = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  const startTimes = ['08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00', '12:00:00', '12:30:00', '13:00:00', '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00'];
+  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [selectedSpace, setSelectedSpace] = useState('');
   const [bookings, setData] = useState([]);
   const [name, setName] = useState('');
   const [space, setSpace] = useState('');
@@ -25,10 +39,31 @@ function App() {
   //setDay = new Date(date).toLocaleDateString(undefined, { weekday: "long" });
   const day = new Date(date).toLocaleDateString(undefined, { weekday: "long" })
   const [endTimeOptions, setEndTimeOptions] = useState([]);
+  const [startTimeOptions, setStartTimeOptions] = useState([]);
   //const [data, setData] = useState([]);
   console.log(startTime);
+  useEffect(() => {
+    setSelectedSpace('Space A'); // Set the initial value for selectedSpace
+  }, []);
+  const handleSpaceButtonClick = (space) => {
+    setSelectedSpace(space);
+  console.log(space);
+    // You can perform additional actions based on the selected space
+    // For example, you can filter the bookings based on the selected space
+    const  new_bookings=bookings;
+    console.log(new_bookings);
+    const filteredBookings = new_bookings.filter(booking => booking.space === space);
+    console.log(filteredBookings);
+    // Perform any other actions you need with the filtered bookings
+//setData(filteredBookings);
+setFilteredBookings(filteredBookings);
+  };
+
   const handleEndTimeChange = (event) => {
-    
+
+    fetch('/available-times/${date}')
+      .then((response) => response.json())
+      .then((data) => { setAvailableTimes(data); console.log(data); })
     const selectedStartTime = event.target.value;
 
     setStartTime(selectedStartTime);
@@ -38,7 +73,18 @@ function App() {
     setEndTimeOptions(filteredEndTimes);
 
   }
+  const handleDateChange = (event) => {
+    const selectedDate = event.target.value;
+    setDate(selectedDate);
 
+    fetch(`/available-times/${selectedDate}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setAvailableTimes(data);
+        setStartTimeOptions(data); console.log(data)
+      })
+      .catch((error) => console.log(error));
+  };
 
   // Filter the end time options based on the selected start time
 
@@ -50,45 +96,18 @@ function App() {
       .catch((error) => console.log(error));
   }, []); */
 
-//Available start times
-  /* useEffect(() => {
-    // Filter and calculate available times
-    const startTime = new Date();
-    startTime.setHours(9, 0, 0); // Set the starting time
-    const endTime = new Date();
-    endTime.setHours(17, 0, 0); // Set the ending time
-
-    const timeSlots = [];
-    let currentTime = startTime;
-    while (currentTime < endTime) {
-      const isBooked = bookedTimes.some(
-        (bookedTime) =>
-          new Date(bookedTime.StartTime) <= currentTime &&
-          new Date(bookedTime.EndTime) > currentTime
-      );
-
-      if (!isBooked) {
-        timeSlots.push(currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      }
-
-      currentTime = new Date(currentTime.getTime() + 60 * 60000); // Increment by 15 minutes
-    }
-
-    setAvailableTimes(timeSlots);
-  }, [bookedTimes]);
-
- */
 
 
-  
+
+
 
   useEffect(() => {
     fetch('/api/data')
       .then(response => response.json())
-      .then(data => { setData(data); console.log(data); });
+      .then(data => { setData(data); console.log(data);setFilteredBookings(data) });
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     fetch('/api/bookings')
       .then((response) => response.json())
       .then((data) => { setData(data); console.log(data); })
@@ -97,7 +116,7 @@ function App() {
 
       .catch((error) => console.log(error));
   }, []);
-
+ */
 
 
   // Filter the end time options based on the selected start time
@@ -142,6 +161,17 @@ function App() {
     }
   };
 
+  const getColumnColor = (dayOfWeek) => {
+    if (dayOfWeek === 0) {
+      return 'lightcoral';
+    } else if (dayOfWeek === 6) {
+      return 'lightyellow';
+    } else {
+      return 'lightgray';
+    }
+  };
+
+
 
   return (
     <div>
@@ -169,7 +199,7 @@ function App() {
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={handleDateChange}
 
             />
           </label>
@@ -180,7 +210,7 @@ function App() {
             <select value={startTime} onChange={handleEndTimeChange}>
 
               <option value="">Select a start time</option>
-              {startTimes.map(time => (
+              {startTimeOptions.map(time => (
                 <option key={time} value={time}>{time}</option>
               ))}
               {/* Add more options as needed */}
@@ -212,18 +242,25 @@ function App() {
         <thead>
           <tr>
             <th></th> {/* Empty cell for spacing */}
-            {daysOfWeek.map(day => (
-              <th style={tableHeaderStyle} key={day}>{day}</th>
+            {daysOfWeek.map((day, index) => (
+              <th style={tableHeaderStyle} key={index}>
+                {new Date(day).toLocaleDateString(undefined, {
+                  month: "2-digit",
+                  day: "2-digit",
+                  year: "2-digit"
+                })} {/* Display the date */}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {timeSlots.map(timeSlot => (
+
             <tr key={timeSlot}>
               <td style={tableCellStyle}>{timeSlot}</td>
               {daysOfWeek.map(day => {
-                const booking = bookings.find(
-                  booking => booking.day === day && booking.startTime === timeSlot
+                const booking = filteredBookings.find(
+                  booking => booking.Date === day && booking.startTime === timeSlot.split("-")[0]&& booking.space===selectedSpace
                 );
                 return (
 
@@ -241,10 +278,41 @@ function App() {
       </table>
 
 
-      <button style={{ backgroundColor: 'orange' }} type="submit">SPACE A</button>
-      <button style={{ backgroundColor: 'orange' }} type="submit">SPACE B</button>
-      <button style={{ backgroundColor: 'orange' }} type="submit">SPACE C</button>
-      <button style={{ backgroundColor: 'orange' }} type="submit">SPACE D</button>
+      <div>
+        {/* Rest of your code */}
+
+        <button
+          style={{ backgroundColor: selectedSpace === 'Space A' ? 'green' : 'orange' }}
+          type="button"
+          onClick={() => handleSpaceButtonClick('Space A')}
+        >
+          SPACE A
+        </button>
+
+        <button
+          style={{ backgroundColor: selectedSpace === 'Space B' ? 'green' : 'orange' }}
+          type="button"
+          onClick={() => handleSpaceButtonClick('Space B')}
+        >
+          SPACE B
+        </button>
+
+        <button
+          style={{ backgroundColor: selectedSpace === 'Space C' ? 'green' : 'orange' }}
+          type="button"
+          onClick={() => handleSpaceButtonClick('Space C')}
+        >
+          SPACE C
+        </button>
+
+        <button
+          style={{ backgroundColor: selectedSpace === 'Space D' ? 'green' : 'orange' }}
+          type="button"
+          onClick={() => handleSpaceButtonClick('Space D')}
+        >
+          SPACE D
+        </button>
+      </div>
 
     </div>
 
