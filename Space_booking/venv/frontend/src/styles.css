@@ -22,4 +22,6 @@ table {
   button {
     margin-right: 0.5rem;
   }
-  
+  td:hover{
+    background-color:green;
+  }

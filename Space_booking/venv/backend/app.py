@@ -30,10 +30,12 @@ cursor = conn.cursor()
 
    
 
-@app.route('/api/data',methods=['GET'])
-def get_data():
+@app.route('/api/data/<space>',methods=['GET'])
+def get_data(space):
     cursor=conn.cursor()
-    cursor.execute("SELECT id,FORMAT(date, 'MM/dd/yy') AS date,space,name,startTime,endTime,Date_today,day FROM booking;")
+   
+    query="SELECT id,FORMAT(date, 'MM/dd/yy') AS date,name,startTime,endTime,Date_today,day FROM booking WHERE space =?;"
+    cursor.execute(query, (space,))
     rows = cursor.fetchall()
 
     # Convert the data to a list of dictionaries
@@ -42,12 +44,12 @@ def get_data():
         data.append({
             'id': row[0],
             'Date': row[1],
-            'space': row[2].strip(),
-            'name':row[3].strip(),
-            'startTime':str(row[4]),
-            'endTime':str(row[5]),
-            'Date_today':row[6],
-            'day':row[7].strip(),
+            'space': space,
+            'name':row[2].strip(),
+            'startTime':str(row[3]),
+            'endTime':str(row[4]),
+            'Date_today':row[5],
+            'day':row[6].strip(),
             # Add more columns as needed
         })
 
@@ -128,34 +130,36 @@ def delete_booking(booking_id):
         cursor.close()
 
 
-@app.route('/available-times/<date>', methods=['GET'])
-def get_available_times(date):
-    item = ['08:00:00','08:30:00', '09:00:00', '09:30:00','10:00:00', '10:30:00','11:00:00','11:30:00' ,'12:00:00', '12:30:00','13:00:00', '13:30:00','14:00:00','14:30:00', '15:00:00', '15:30:00','16:00:00','16:30:00', '17:00:00']
-    new_list=[]
-    
+
+
+@app.route('/available-times/<date>/<space>', methods=['GET'])
+def get_available_times(date,space):
+    item = ['08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00', '12:00:00', '12:30:00', '13:00:00', '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00']
+    new_list = []
+
     cursor = conn.cursor()
-    print(date)
+    date = datetime.strptime(date, '%Y-%m-%d').date()  # Convert the date string to a datetime.date object
     try:
         today = datetime.now().date()
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=6)
 
-       
-
         # Perform your filtering query here
-        query = f"SELECT DISTINCT startTime FROM Booking WHERE space = 'Space A' and date='{date} 00:00:00.000'"
-        cursor.execute(query)
+        query = "SELECT DISTINCT startTime FROM Booking WHERE space = ? and date=?"
+        cursor.execute(query, (space,date,))  # Pass the date as a parameter
 
-        available_times = [str(row.startTime) for row in cursor.fetchall()]
-        print(available_times)
+        available_times = [str(row[0]) for row in cursor.fetchall()]
         for element in item:
             if element not in available_times:
                 new_list.append(element)
-        print(new_list)        
-        return jsonify(new_list)
+        return jsonify(new_list)  # Return a dictionary with the available times
     except Exception as e:
-        return jsonify({'message': 'An error occurred'}), 500
+        print(e)
+        return {'error': 'An error occurred'}  # Return an error message in a dictionary
     finally:
         cursor.close()
+
+# ...
+
 if __name__ == '__main__':
     app.run()
