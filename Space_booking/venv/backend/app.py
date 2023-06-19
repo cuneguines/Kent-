@@ -2,9 +2,8 @@ from flask import Flask, jsonify, request
 import json
 from flask_cors import CORS
 app = Flask(__name__)
-CORS(app, origins='http://localhost:3000')
-app = Flask(__name__)
-
+# CORS(app, origins='http://localhost:3000')
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 import pyodbc
 import datetime
 from datetime import timedelta,datetime
@@ -52,17 +51,16 @@ def get_data(space):
             'day':row[6].strip(),
             # Add more columns as needed
         })
-
+    cursor.close()
+    
     # Return the data as JSON
     return jsonify(data)
     
-with open("bookings.json", 'r') as f:
-    bookings = json.load(f)
-cursor.close()
+
      
-@app.route('/api/bookings', methods=['GET'])
+""" @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
-    return jsonify(bookings)
+    return jsonify(bookings) """
 
 
 @app.route('/api/bookings', methods=['POST'])
@@ -113,6 +111,7 @@ def add_booking():
         return jsonify({'error': str(e)}), 500
     finally:
         cursor.close()
+        
 # API endpoint to delete a booking by ID
 @app.route('/api/bookings/<booking_id>', methods=['DELETE'])
 def delete_booking(booking_id):

@@ -10,15 +10,16 @@ const daysOfWeek = [];
 const startDate = new Date();
 for (let i = 0; i < 28; i++) {
   const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
-  const formattedDate = new Date(date).toLocaleDateString(undefined, {
-    month: "2-digit",
-    day: "2-digit",
-    year: "2-digit"
-  });
-
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear().toString().slice(-2);
+  const formattedDate = `${month}/${day}/${year}`;
+  
   daysOfWeek.push(formattedDate);
   console.log(formattedDate);
 }
+
+
 const SpaceA = () => {
 
     
@@ -149,7 +150,7 @@ const SpaceA = () => {
     useEffect(() => {
       fetch(`/api/data/${'Space A'}`)
         .then(response => response.json())
-        .then(data => { setData(data);  setFilteredBookings(data);
+        .then(data => { setData(data);  setFilteredBookings(data);console.log('datai',data);
          
             const filteredBookings = data.filter(booking => booking.space === 'Space A'); });
             console.log(filteredBookings);
@@ -180,7 +181,8 @@ const SpaceA = () => {
     // Filter the end time options based on the selected start time
   
   
-    const addBooking = () => {
+    /* const addBooking = () => {
+      
       if (name && space && startTime && endTime && date) {
         const newBooking = {
           id: bookings.length + 1,
@@ -192,8 +194,8 @@ const SpaceA = () => {
           day,
         };
   
-  
-        fetch('/api/bookings', {
+  console.log('newbookingis',newBooking);
+        axios.fetch(`/api/bookings`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -208,7 +210,73 @@ const SpaceA = () => {
   
           .catch((error) => console.log(error));
       }
+    }; */
+
+
+
+    /* const addBooking = () => {
+      if (name && space && startTime && endTime && date) {
+        const newBooking = {
+          id: bookings.length + 1,
+          name,
+          space,
+          date,
+          startTime,
+          endTime,
+          day,
+        };
+    
+        console.log('newbookingis', newBooking);
+        axios
+          .post(`/api/bookings`, newBooking, {
+            timeout: 5000,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            alert(response.data);
+            setData([...bookings, response.data]);
+          })
+          .catch((error) => console.log(error));
+      }
     };
+     */
+
+    const request = require('superagent');
+
+const addBooking = () => {
+  console.log(name);
+  console.log(space);
+  console.log(startTime);
+  console.log(endTime);
+  console.log(date);
+  alert('yes');
+  if (name && space && startTime && endTime && date) {
+    const newBooking = {
+      id: bookings.length + 1,
+      name,
+      space,
+      date,
+      startTime,
+      endTime,
+      day,
+    };
+
+    console.log('newbookingis', newBooking);
+
+    request
+      .post('http://127.0.0.1:5000/api/bookings')
+      .send(newBooking)
+      .set('Content-Type', 'application/json')
+      .then((response) => {
+        setData([...bookings, response.body]);
+        alert(response.body);
+      })
+      .catch((error) => console.log(error));
+  }
+};
+
     //DELETE
   
     
@@ -329,21 +397,17 @@ const SpaceA = () => {
             SPACE D
           </button>
         </div>
-        <div style={{ overflowX: 'scroll',overflowY: 'scroll'}}>
+        <div style={{ height:'500px',overflowX: 'scroll',overflowY: 'scroll'}}>
         <table style={{ overflowX: 'scroll', tablelayout: 'fixed', width: '100%', marginTop: '2px', backgroundColor: '#499ca7', maxWidth: '100vw' }}>
   
           <thead>
             <tr>
               <th></th> {/* Empty cell for spacing */}
               {daysOfWeek.map((day, index) => (
+                
                 <th style={tableHeaderStyle} key={index}>
-                  {new Date(day).toLocaleDateString(undefined, {
-                    day: "2-digit",
-                    month: "2-digit",
-  
-  
-                  })} {/* Display the date */}
-                </th>
+                {`${(new Date(day).getMonth() + 1).toString().padStart(2, '0')}/${new Date(day).getDate().toString().padStart(2, '0')}/${new Date(day).getFullYear().toString().slice(-2)}`}
+              </th>
               ))}
             </tr>
           </thead>
@@ -361,9 +425,9 @@ const SpaceA = () => {
                   const cellStyle = { ...tableCellStyle };
   
                   // Set the background color based on the day of the week
-                  if (dayOfWeek === 0) {
+                  if (dayOfWeek === 6) {
                     cellStyle.backgroundColor = 'lightblue'; // Sunday
-                  } else if (dayOfWeek === 1) {
+                  } else if (dayOfWeek === 0) {
                     cellStyle.backgroundColor = 'lightyellow'; // Monday
                   } else {
                     cellStyle.backgroundColor = 'lightgray'; // Other days
