@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <div id="userForm">
+        <h2>Create User</h2>
+        <input type="text" id="nameInput" placeholder="Name">
+        <input type="email" id="emailInput" placeholder="Email">
+        <button id="createButton">Create</button>
+    </div>
+
+    <div id="userList">
+        <h2>User List</h2>
+        <ul id="users"></ul>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

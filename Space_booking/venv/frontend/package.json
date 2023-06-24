@@ -9,6 +9,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
+    "babel-polyfill": "^6.26.0",
     "core-js": "^3.31.0",
     "date": "^2.0.2",
     "date-fns": "^2.30.0",

@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 import json
 from flask_cors import CORS
 app = Flask(__name__)
-# CORS(app, origins='http://localhost:3000')
+CORS(app, origins='http://localhost:3000')
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 import pyodbc
 import datetime
@@ -26,14 +26,33 @@ import pyodbc
 # Create a cursor
 cursor = conn.cursor()
 #Available times
+@app.route('/api/user',methods=['GET'])
+def get_user(space):
+    cursor=conn.cursor()
+   
+    query="SELECT fname,lname from users"
+    
+    rows = cursor.fetchall()
 
+    # Convert the data to a list of dictionaries
+    data = []
+    for row in rows:
+        data.append({
+            'name': row[0],
+            
+            # Add more columns as needed
+        })
+    cursor.close()
+    
+    # Return the data as JSON
+    return jsonify(data)
    
 
 @app.route('/api/data/<space>',methods=['GET'])
 def get_data(space):
     cursor=conn.cursor()
    
-    query="SELECT id,FORMAT(date, 'MM/dd/yy') AS date,name,startTime,endTime,Date_today,day FROM booking WHERE space =?;"
+    query="SELECT id,FORMAT(date, 'MM/dd/yy') AS date,new_name,startTime,endTime,Date_today,day FROM booking_clone WHERE space =?;"
     cursor.execute(query, (space,))
     rows = cursor.fetchall()
 
@@ -44,7 +63,7 @@ def get_data(space):
             'id': row[0],
             'Date': row[1],
             'space': space,
-            'name':row[2].strip(),
+            'name':row[2],
             'startTime':str(row[3]),
             'endTime':str(row[4]),
             'Date_today':row[5],
@@ -95,7 +114,7 @@ def add_booking():
                 
                 # Calculate the difference between current time and next time
                 difference = next_time - current_time
-                insert_query=f"INSERT INTO booking (name, date, space,startTime,endTime,Date_Today,day) VALUES ('{name}', '{date}', '{space}','{current_time}','{next_time}','{date_Today}','{day}')"
+                insert_query=f"INSERT INTO booking_clone (new_name, date, space,startTime,endTime,Date_Today,day) VALUES ('{name}', '{date}', '{space}','{current_time}','{next_time}','{date_Today}','{day}')"
                 # Insert a new booking entry into the database
                 cursor.execute(insert_query)
                 print(insert_query)
@@ -116,7 +135,7 @@ def add_booking():
 @app.route('/api/bookings/<booking_id>', methods=['DELETE'])
 def delete_booking(booking_id):
     cursor = conn.cursor()
-    delete_query = f"DELETE FROM booking WHERE id = {booking_id}"
+    delete_query = f"DELETE FROM booking_clone WHERE id = {booking_id}"
     
     try:
         cursor.execute(delete_query)
@@ -144,13 +163,14 @@ def get_available_times(date,space):
         end_of_week = start_of_week + timedelta(days=6)
 
         # Perform your filtering query here
-        query = "SELECT DISTINCT startTime FROM Booking WHERE space = ? and date=?"
+        query = "SELECT DISTINCT startTime FROM booking_clone WHERE space = ? and date=?"
         cursor.execute(query, (space,date,))  # Pass the date as a parameter
 
         available_times = [str(row[0]) for row in cursor.fetchall()]
         for element in item:
             if element not in available_times:
                 new_list.append(element)
+                
         return jsonify(new_list)  # Return a dictionary with the available times
     except Exception as e:
         print(e)

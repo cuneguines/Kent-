@@ -6,6 +6,10 @@ import SpaceB from './components/SpaceB';
 
 import SpaceC from './components/SpaceC';
 import SpaceD from './components/SpaceD';
+import SpaceE from './components/SpaceE';
+import Test from './components/Test';
+
+
 import { FaTrash } from 'react-icons/fa';
 
 const timeSlots = ['08:00:00--08:30:00', '08:30:00--09:00:00', '09:00:00--09:30:00', '09:30:00--10:00:00', '10:00:00--10:30:00', '10:30:00--11:00:00', '11:00:00--11:30:00 ', '11:30:00--12:00:00', '12:00:00--12:30:00', '12:30:00--13:00:00', '13:00:00--13:30:00', '13:30:00--14:00:00', '14:00:00--14:30:00', '14:30:00--16:00:00', '15:00:00--15:30:00', '15:30:00--16:00:00', '16:00:00--16:30:00', '16:30:00--17:00:00'];
@@ -39,26 +43,43 @@ function App() {
     <Link
       to="/spaceA"
       className={`button ${selectedSpace === 'SpaceA' ? 'active' : ''}`}
+      onClick={() => handleSpaceButtonClick('SpaceA')}
     >
       Engineer Room
     </Link>
     <Link
       to="/spaceB"
       className={`button ${selectedSpace === 'SpaceB' ? 'active' : ''}`}
+      onClick={() => handleSpaceButtonClick('SpaceB')}
     >
       VMS
     </Link>
     <Link
       to="/spaceC"
       className={`button ${selectedSpace === 'SpaceC' ? 'active' : ''}`}
+      onClick={() => handleSpaceButtonClick('SpaceC')}
     >
       Interview Room
     </Link>
     <Link
       to="/spaceD"
       className={`button ${selectedSpace === 'SpaceD' ? 'active' : ''}`}
+      onClick={() => handleSpaceButtonClick('SpaceD')}
     >
       Green Room
+    </Link>
+    <Link
+      to="/spaceE"
+      className={`button ${selectedSpace === 'SpaceE' ? 'active' : ''}`}
+      onClick={() => handleSpaceButtonClick('SpaceE')}
+    >
+      Board Room
+    </Link>
+    <Link
+      to="/TEST"
+      
+    >
+      TEST
     </Link>
   </div>
 
@@ -68,6 +89,8 @@ function App() {
           <Route path="/spaceB" element={<SpaceB />} />
           <Route path="/spaceC" element={<SpaceC />} />
           <Route path="/spaceD" element={<SpaceD />} />
+          <Route path="/spaceE" element={<SpaceE />} />
+          <Route path="/Test"  element={<Test />}/>
         </Routes>
       </div>
     </Router>
