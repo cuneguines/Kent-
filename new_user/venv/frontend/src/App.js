@@ -22,7 +22,7 @@ function App() {
 
     // Make a POST request to the backend with the login credentials
     axios
-      .post('http://127.0.0.1:5000/api/login', { username, password })
+      .post('http://127.0.0.1:5001/api/login', { username, password })
       .then((response) => {
         const data = response.data;
         // Handle the response from the backend
@@ -70,7 +70,7 @@ function App() {
           onChange={handlePasswordChange}
         />
       </div>
-      <button type="submit">Login</button>
+      <button style={{backgroundColor:'#0056b3'}}type="submit">Login</button>
     </form>
     </div>
   );

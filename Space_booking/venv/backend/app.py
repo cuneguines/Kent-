@@ -26,34 +26,43 @@ import pyodbc
 # Create a cursor
 cursor = conn.cursor()
 #Available times
-@app.route('/api/user',methods=['GET'])
-def get_user(space):
-    cursor=conn.cursor()
-   
-    query="SELECT fname,lname from users"
-    
+from flask import Flask, jsonify
+import json
+
+app = Flask(__name__)
+
+
+
+# Define the route for the API endpoint
+@app.route('/api/user', methods=['GET'])
+def get_user():
+    cursor = conn.cursor()
+
+    query = "SELECT fname, lname FROM users;"
+    cursor.execute(query)
     rows = cursor.fetchall()
 
     # Convert the data to a list of dictionaries
     data = []
     for row in rows:
         data.append({
-            'name': row[0],
-            
+            'fname': row[0],
+            'lname': row[1],
             # Add more columns as needed
         })
     cursor.close()
-    
+    conn.commit()
     # Return the data as JSON
     return jsonify(data)
+
    
 
 @app.route('/api/data/<space>',methods=['GET'])
 def get_data(space):
     cursor=conn.cursor()
    
-    query="SELECT id,FORMAT(date, 'MM/dd/yy') AS date,new_name,startTime,endTime,Date_today,day FROM booking_clone WHERE space =?;"
-    cursor.execute(query, (space,))
+    query="SELECT id,FORMAT(date, 'MM/dd/yy') AS date,new_name,startTime,endTime,Date_today,day FROM booking_clone WHERE space ='{}'".format(space)
+    cursor.execute(query)
     rows = cursor.fetchall()
 
     # Convert the data to a list of dictionaries
@@ -71,7 +80,7 @@ def get_data(space):
             # Add more columns as needed
         })
     cursor.close()
-    
+    conn.commit()
     # Return the data as JSON
     return jsonify(data)
     
@@ -178,7 +187,118 @@ def get_available_times(date,space):
     finally:
         cursor.close()
 
-# ...
+
+
+""" @app.route('/available-endtimes/<date>/<start_time>', methods=['GET'])
+def get_available_endtimes(date, start_time):
+    item = ['08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00', '12:00:00', '12:30:00', '13:00:00', '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00']
+    new_list = []
+
+    cursor = conn.cursor()
+    date = datetime.strptime(date, '%Y-%m-%d').date()  # Convert the date string to a datetime.date object
+    try:
+        # Perform your filtering query here
+        query = "SELECT DISTINCT endTime FROM booking_clone WHERE date=?"
+        cursor.execute(query, (date,))  # Pass the date as a parameter
+
+        available_times = [str(row[0]) for row in cursor.fetchall()]
+        for element in item:
+            if element not in available_times:
+                new_list.append(element)
+        
+        print(new_list)
+        return jsonify(new_list)
+       
+    except Exception as e:
+        print(e)
+        return {'error': 'An error occurred'}  # Return an error message in a dictionary
+    finally:
+        cursor.close() """
+""" @app.route('/available-endtimes/<date>/<start_time>', methods=['GET'])
+def get_available_endtimes(date, start_time):
+    print(start_time)
+    new_list = ['12:00:00', '12:30:00', '14:30:00', '15:00:00', '17:00:00']
+
+    if start_time not in new_list:
+        return jsonify([])  # Start time not found, return an empty list
+
+    consecutive_times = []
+    start_index = new_list.index(start_time)
+
+    for i in range(start_index + 1, len(new_list)):
+        current_time = datetime.strptime(new_list[i], '%H:%M:%S')
+        prev_time = datetime.strptime(new_list[i - 1], '%H:%M:%S')
+        time_diff = (current_time - prev_time).seconds
+        if time_diff == 1800:  # Check if the time difference is 30 minutes (1800 seconds)
+            consecutive_times.append(new_list[i])
+        else:
+            break
+
+    print(consecutive_times)
+
+    return jsonify(consecutive_times)
+ """
+
+@app.route('/available-endtimes/<date>/<start_time>/<space>', methods=['GET'])
+def get_available_endtimes(date, start_time,space):
+    item = ['08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00', '12:00:00', '12:30:00', '13:00:00', '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00']
+    new_list = []
+    pre_list=[]
+    consecutive_times=[]
+    cursor = conn.cursor()
+    date = datetime.strptime(date, '%Y-%m-%d').date()  # Convert the date string to a datetime.date object
+
+    try:
+        # Perform your filtering query here
+        query = "SELECT DISTINCT endTime FROM booking_clone WHERE date=? and space=?"
+        cursor.execute(query, (date,space,))  # Pass the date as a parameter
+        
+        available_times = [str(row[0]) for row in cursor.fetchall()]
+       
+        new_list = [time for time in item if time not in available_times]
+      
+        
+        
+        start_time_initial=datetime.strptime(start_time, '%H:%M:%S')
+        start_time=datetime.strptime(start_time, '%H:%M:%S')
+        time_diff=0
+        print(new_list)
+        for i in range(len(new_list)):
+                current_time = datetime.strptime(new_list[i], '%H:%M:%S')
+                print(start_time)
+                print(current_time)
+                if current_time > start_time:
+                   
+                    pre_list.append(new_list[i])
+                    print(time_diff)
+                    start_time=current_time
+                
+
+        print(pre_list)
+        print(start_time_initial)
+        for i in range(len(pre_list)):
+        
+            current_time = datetime.strptime(pre_list[i], '%H:%M:%S')
+            print(current_time)
+            time_diff = (current_time - start_time_initial).seconds
+            if time_diff == 1800:  # Check if the time difference is 30 minutes (1800 seconds)
+                consecutive_times.append(pre_list[i])
+                start_time_initial=current_time
+                print(start_time_initial)
+                print(time_diff)
+            else:
+                break
+        print(consecutive_times)
+        return jsonify(consecutive_times)
+
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'An error occurred'})
+
+    finally:
+        cursor.close()
+
+
 
 if __name__ == '__main__':
     app.run()

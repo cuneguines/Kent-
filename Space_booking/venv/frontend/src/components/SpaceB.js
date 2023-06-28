@@ -33,7 +33,7 @@ const SpaceB = () => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [date, setDate] = useState('');
-
+  const [users, setUsers] = useState([]);
   const [bookedTimes, setBookedTimes] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
 
@@ -95,25 +95,29 @@ const SpaceB = () => {
   };
   const handleEndTimeChange = (event) => {
 
-    //fetch('/available-times/${date}')
-    //.then((response) => response.json())
-    //.then((data) => { setAvailableTimes(data); console.log(data); })
-    const selectedStartTime = event.target.value;
+       
+    const selectedDate = date; // Replace 'date' with the selected date variable
+    const selectedStartTime = event.target.value; // Replace 'startTime' with the selected start time variable
+  setStartTime(selectedStartTime);
+    fetch(`/available-endtimes/${selectedDate}/${selectedStartTime}/${'Space B'}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setEndTimeOptions(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log('Error fetching available end times:', error);
+      });
+  };
 
-    setStartTime(selectedStartTime);
-    console.log(selectedStartTime);
-    const filteredEndTimes = startTimes.filter(time => time > selectedStartTime);
-    console.log(filteredEndTimes);
-    setEndTimeOptions(filteredEndTimes);
-
-  }
+  
   const handleDateChange = (event) => {
     const selectedDate = event.target.value;
     setDate(selectedDate);
     console.log(selectedDate);
     console.log(space);
 
-    fetch(`/available-times/${selectedDate}/${space}`)
+    fetch(`/available-times/${selectedDate}/${'Space B'}`)
       .then((response) => response.json())
       .then((data) => {
         setAvailableTimes(data);
@@ -125,6 +129,20 @@ const SpaceB = () => {
 
 
   console.log('space is', space);
+
+
+  useEffect(() => {
+    // Fetch the users from the backend
+    axios.get('/api/user')
+      .then(response => {
+        setUsers(response.data);
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.error('Error fetching users:', error);
+      });
+  }, []);
+
   // Filter the end time options based on the selected start time
 
 
@@ -311,14 +329,15 @@ console.log('newbookingis',newBooking);
       <div style={{ padding: '2%' }}>
         <form onSubmit={addBooking}>
       
-
-<select value={name} onChange={(e) => setName(e.target.value)}>
+        <select value={name} onChange={(e) => setName(e.target.value)}>
   <option value="">Select a name</option>
-  <option value="John">John</option>
-  <option value="Jane">Jane</option>
-  <option value="Mike">Mike</option>
-  {/* Add more options as needed */}
+  {users.map((user) => (
+    <option key={user.id} value={`${user.fname} ${user.lname}`}>
+    {`${user.fname} ${user.lname}`}
+    </option>
+  ))}
 </select>
+
 
 
 
@@ -339,12 +358,20 @@ console.log('newbookingis',newBooking);
             Start Time:
             <select value={startTime} onChange={handleEndTimeChange}>
 
-              <option value="">Select a start time</option>
-              {startTimeOptions.map(time => (
-                <option key={time} value={time}>{time}</option>
-              ))}
-              {/* Add more options as needed */}
-            </select>
+            <option value="">Select a start time</option>
+  {startTimeOptions.map(time => {
+    // Extract hour and minute from the time value
+    const [hour, minute] = time.split(':').slice(0, 2);
+    // Construct the display value without seconds
+    const displayValue = `${hour}:${minute}`;
+    return (
+      <option key={displayValue} value={time}>
+        {displayValue}
+      </option>
+    );
+  })}
+  {/* Add more options as needed */}
+</select>
 
 
           </label>
@@ -352,12 +379,20 @@ console.log('newbookingis',newBooking);
             End Time:
 
             <select value={endTime} onChange={(e) => setEndTime(e.target.value)}>
-              <option value="">Select an end time</option>
-              {endTimeOptions.map(time => (
-                <option key={time} value={time}>{time}</option>
-              ))}
-              {/* Add more options as needed */}
-            </select>
+  <option value="">Select an end time</option>
+  {endTimeOptions.map(time => {
+    // Extract hour and minute from the time value
+    const [hour, minute] = time.split(':').slice(0, 2);
+    // Construct the display value without seconds
+    const displayValue = `${hour}:${minute}`;
+    return (
+      <option key={displayValue} value={time}>
+        {displayValue}
+      </option>
+    );
+  })}
+  {/* Add more options as needed */}
+</select>
 
 
           </label>
@@ -444,16 +479,21 @@ const tableHeaderStyle = {
   borderBottom: '1px solid #ddd',
   textAlign: 'left',
   fontSize: '8px',
-  boxShadow: '-1px -1px 6px white, 0 3px 12px 20px rgba(0, 0, 0, 0.23)',
+  boxShadow: '-1px -1px 6px green, 0 3px 12px 20px rgba(0, 0, 0, 0.23)',
   color:'black',
+  position: 'sticky',
+  top: 0,
+  
 };
 
 // Inline styles for table cells
 const tableCellStyle = {
   padding: '4px',
   borderBottom: '1px solid #ddd',
-
-};
+  fontFamily:'Sans',
+  fontSize:'smaller',
+  color:'black',
+}
 
 
 

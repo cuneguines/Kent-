@@ -16,7 +16,7 @@ function createUser(event) {
     email: emailInput.value
   };
 
-  fetch('http://localhost:5000/users', {
+  fetch('http://localhost:5001/users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ function createUser(event) {
 }
 
 function fetchUsers() {
-  fetch('http://localhost:5000/users')
+  fetch('http://localhost:5001/users')
     .then(response => {
       if (response.ok) {
         return response.json(); // Parse the JSON response
@@ -148,7 +148,7 @@ function fetchUsers() {
 
 function deleteUser(userId) {
   event.preventDefault();
-  fetch(`http://localhost:5000/users/${userId}`, {
+  fetch(`http://localhost:5001/users/${userId}`, {
     method: 'DELETE'
   })
     .then(response => {
@@ -184,7 +184,7 @@ function updateUser(userId) {
     }
 
     // PUT request to update the user
-    fetch(`http://localhost:5000/users/${userId}`, {
+    fetch(`http://localhost:5001/users/${userId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

@@ -33,7 +33,7 @@ const SpaceA = () => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [date, setDate] = useState('');
-
+  const [users, setUsers] = useState([]);
   const [bookedTimes, setBookedTimes] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
 
@@ -43,6 +43,7 @@ const SpaceA = () => {
   const [startTimeOptions, setStartTimeOptions] = useState([]);
   //const [data, setData] = useState([]);
   console.log(startTime);
+  
   //console.log(filteredBookings);
   useEffect(() => {
     setSpace('Space A'); // Set the initial value for selectedSpace
@@ -93,20 +94,23 @@ const SpaceA = () => {
         .catch((error) => console.log(error));
     }
   };
+ 
   const handleEndTimeChange = (event) => {
-
-    fetch('/available-times/${date}')
-    //.then((response) => response.json())
-    //.then((data) => { setAvailableTimes(data); console.log(data); })
-    /* const selectedStartTime = event.target.value;
-
-    setStartTime(selectedStartTime);
-    console.log(selectedStartTime);
-    const filteredEndTimes = startTimes.filter(time => time > selectedStartTime);
-    console.log(filteredEndTimes);
-    setEndTimeOptions(filteredEndTimes);
- */
-  }
+    
+    const selectedDate = date; // Replace 'date' with the selected date variable
+    const selectedStartTime = event.target.value; // Replace 'startTime' with the selected start time variable
+  setStartTime(selectedStartTime);
+    fetch(`/available-endtimes/${selectedDate}/${selectedStartTime}/${space}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setEndTimeOptions(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log('Error fetching available end times:', error);
+      });
+  };
+  
   const handleDateChange = (event) => {
     const selectedDate = event.target.value;
     setDate(selectedDate);
@@ -134,6 +138,18 @@ const SpaceA = () => {
       .then((data) => {setAvailableTimes(data);console.log(data);})
       .catch((error) => console.log(error));
   }, []); */
+
+  useEffect(() => {
+    // Fetch the users from the backend
+    axios.get('/api/user')
+      .then(response => {
+        setUsers(response.data);
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.error('Error fetching users:', error);
+      });
+  }, []);
 
 
   const getDayOfWeek = (dateString) => {
@@ -332,13 +348,13 @@ console.log('newbookingis',newBooking);
       
 
         <label>
-            Select a user:
-            <select value={name} onChange={(e) => setName(e.target.value)}>
+        <select value={name} onChange={(e) => setName(e.target.value)}>
   <option value="">Select a name</option>
-  <option value="Michael.Holton">John</option>
-  <option value="Jane.Eyre">Jane</option>
-  <option value="Mike">Mike</option>
-  {/* Add more options as needed */}
+  {users.map((user) => (
+    <option key={user.id} value={`${user.fname} ${user.lname}`}>
+    {`${user.fname} ${user.lname}`}
+    </option>
+  ))}
 </select>
 </label>
           
@@ -481,15 +497,20 @@ const tableHeaderStyle = {
   borderBottom: '1px solid #ddd',
   textAlign: 'left',
   fontSize: '8px',
-  boxShadow: '-1px -1px 6px white, 0 3px 12px 20px rgba(0, 0, 0, 0.23)',
+  boxShadow: '-1px -1px 6px green, 0 3px 12px 20px rgba(0, 0, 0, 0.23)',
   color:'black',
+  position: 'sticky',
+  top: 0,
+  
 };
 
 // Inline styles for table cells
 const tableCellStyle = {
   padding: '4px',
   borderBottom: '1px solid #ddd',
-
+  fontFamily:'Sans',
+  fontSize:'smaller',
+  color:'black',
 }
 
 
