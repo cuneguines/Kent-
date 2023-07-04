@@ -27,6 +27,7 @@ def login():
         return jsonify({'success': True})
     else:
         return jsonify({'success': False})
+    
 @app.route('/api/delete/user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
@@ -45,7 +46,8 @@ def delete_user(user_id):
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
 
-       
+    finally:
+        cursor.close()   
 
 
 
@@ -69,7 +71,8 @@ def create_user():
         return jsonify({'success': True, 'message': 'User created successfully'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
-
+    finally:
+        cursor.close()
 @app.route('/api/users', methods=['GET'])
 def get_users():
     try:
@@ -94,7 +97,8 @@ def get_users():
         return jsonify(users)
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
-
+    finally:
+        cursor.close()
 
 if __name__ == '__main__':
-    app.run(port=5001)
+    app.run(port=5000)

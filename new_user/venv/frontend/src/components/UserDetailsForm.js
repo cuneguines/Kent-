@@ -15,7 +15,7 @@ function UserDetailsForm() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/users');
+      const response = await fetch('http://127.0.0.1:5000/api/users');
       const data = await response.json();
       
       setUsers(data);
@@ -44,7 +44,7 @@ function UserDetailsForm() {
 
     if (shouldSubmit) {
       axios
-        .post('http://localhost:5001/api/user', { fname: firstName, lname: lastName, email })
+        .post('http://127.0.0.1:5000/api/user', { fname: firstName, lname: lastName, email })
         .then((response) => {
           const data = response.data;
           if (data.success) {
@@ -67,7 +67,7 @@ function UserDetailsForm() {
 
   const handleDelete = (userId) => {
     axios
-      .delete(`http://localhost:5001/api/delete/user/${userId}`)
+      .delete(`http://127.0.0.1:5000/api/delete/user/${userId}`)
       .then((response) => {
         const data = response.data;
         if (data.success) {
@@ -102,35 +102,41 @@ function UserDetailsForm() {
           </div>
           <button type="submit" style={{ backgroundColor: '#0056b3', color: 'white', padding: '8px 16px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Submit</button>
         </form>
-
-        {/* User table */}
-        <table style={{ marginTop: '20px', width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>ID</th>
-              <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>First Name</th>
-              <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>Last Name</th>
-              <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>Email</th>
-              <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.id}</td>
-                <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.fname}</td>
-                <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.lname}</td>
-                <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.email}</td>
-                <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>
-                  <button onClick={() => handleDelete(user.id)} style={{ padding: '4px 8px', backgroundColor: '#0056b3', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {users.length > 0 ? (
+          <div>
+            {/* User table */}
+            <table style={{ marginTop: '20px', width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>ID</th>
+                  <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>First Name</th>
+                  <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>Last Name</th>
+                  <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>Email</th>
+                  <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd', backgroundColor: '#f2f2f2' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.id}</td>
+                    <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.fname}</td>
+                    <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.lname}</td>
+                    <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{user.email}</td>
+                    <td style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>
+                      <button onClick={() => handleDelete(user.id)} style={{ padding: '4px 8px', backgroundColor: '#0056b3', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>No users found.</p>
+        )}
       </div>
     </div>
   );
+  
 }
 
 export default UserDetailsForm;
