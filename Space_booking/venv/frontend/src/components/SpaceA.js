@@ -440,7 +440,7 @@ console.log('newbookingis',newBooking);
             {timeSlots.map(timeSlot => (
 
               <tr key={timeSlot}>
-                <td style={tableCellStyle}>{timeSlot}</td>
+                <td style={tableCellStyle}>{timeSlot.split("--")[0].slice(0, 5)} to {timeSlot.split("--")[1].slice(0, 5)}</td>
                 {daysOfWeek.map(day => {
                   const booking = filteredBookings.find(
                     booking => booking.Date === day && booking.startTime === timeSlot.split("-")[0] && booking.space === 'Space A'

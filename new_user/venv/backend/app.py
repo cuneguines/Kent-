@@ -58,7 +58,7 @@ def create_user():
     
     fname = data.get('fname')
     lname = data.get('lname')
-    email = data.get('email')
+    email = 'ss@gmail.com'
 
     try:
         # Create a cursor object
@@ -80,7 +80,7 @@ def get_users():
         cursor = conn.cursor()
 
         # Fetch all users from the 'users' table
-        cursor.execute("SELECT * FROM users")
+        cursor.execute("SELECT * FROM users order by fname")
         rows = cursor.fetchall()
        
         # Convert the rows to a list of dictionaries
