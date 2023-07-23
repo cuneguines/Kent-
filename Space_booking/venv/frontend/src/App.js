@@ -8,7 +8,10 @@ import SpaceC from './components/SpaceC';
 import SpaceD from './components/SpaceD';
 import SpaceE from './components/SpaceE';
 import Test from './components/Test';
-
+import NEW from './components/NEW';
+import UserDetailsForm from './components/UserDetailsForm';
+import './index.css';
+import './App.css';
 
 import { FaTrash } from 'react-icons/fa';
 
@@ -75,12 +78,7 @@ function App() {
     >
       Board Room
     </Link>
-    <Link
-      to="/TEST"
-      
-    >
-      TEST
-    </Link>
+  
   </div>
 
 
@@ -91,6 +89,7 @@ function App() {
           <Route path="/spaceD" element={<SpaceD />} />
           <Route path="/spaceE" element={<SpaceE />} />
           <Route path="/Test"  element={<Test />}/>
+          <Route path="/NEW"  element={<NEW />}/>
         </Routes>
       </div>
     </Router>

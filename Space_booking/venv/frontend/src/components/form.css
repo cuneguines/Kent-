@@ -1,0 +1,47 @@
+/* spaceAStyles.css */
+
+/* Form container styles */
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2%;
+    background-color: #f2f2f2;
+    align-items: center;
+  }
+  
+  /* Input field styles */
+  .form-container input[type="date"],
+  .form-container select {
+  
+    padding: 8px;
+    margin: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  /* Button style */
+  .form-container button[type="submit"] {
+    flex: 0 0 auto; /* Prevent button from growing to fill available space */
+    padding: 10px 16px;
+   
+    margin-left: 4px; /* Add some space between the input boxes and the button */
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .form-container button[type="submit"]:hover {
+    background-color: darkorange;
+  }
+  
+  /* Table container styles */
+  .table-container {
+    height: 500px;
+    overflow: scroll;
+  }
+  
+  

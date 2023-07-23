@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import UserDetailsForm from './UserDetailsForm';
 
-
+import'./form.css';
 
 function Test() {
   const [username, setUsername] = useState('');

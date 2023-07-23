@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import UserDetailsForm from './UserDetailsForm';
-import './App.css'; // Import the CSS file for styling
+import './UserDetailsForm.css'; // Import the CSS file for styling
 
 
-function App() {
+function NEW() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
@@ -22,7 +22,7 @@ function App() {
 
     // Make a POST request to the backend with the login credentials
     axios
-      .post('http://127.0.0.1:5001/api/login', { username, password })
+      .post('http://127.0.0.1:5000/api/login', { username, password })
       .then((response) => {
         const data = response.data;
         // Handle the response from the backend
@@ -79,4 +79,4 @@ const divStyle=
 {
   marginTop:'15%',
 }
-export default App;
+export default NEW;

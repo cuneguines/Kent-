@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 //import BookingTable from './components/BookingTable';
-
+import'./form.css';
 import axios from 'axios';
 import { FaTrash } from 'react-icons/fa';
 //const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -327,8 +327,10 @@ console.log('newbookingis',newBooking);
     <div>
       <h1>VMS Room</h1>
       <div style={{ padding: '2%' }}>
-        <form onSubmit={addBooking}>
-      
+        <form className='form-container'onSubmit={addBooking}>
+        <label>
+        Name:
+        
         <select value={name} onChange={(e) => setName(e.target.value)}>
   <option value="">Select a name</option>
   {users.map((user) => (
@@ -340,7 +342,7 @@ console.log('newbookingis',newBooking);
 
 
 
-
+</label>
 
          
           <label>
@@ -400,7 +402,7 @@ console.log('newbookingis',newBooking);
 
 
 
-          <button style={{ backgroundColor: 'orange' }} type="submit">Add Booking</button>
+          <button className="submit-button"style={{ backgroundColor: 'orange' }} type="submit">Add Booking</button>
         </form>
       </div>
       
