@@ -99,7 +99,8 @@ const SpaceA = () => {
   const handleEndTimeChange = (event) => {
     
     const selectedDate = date; // Replace 'date' with the selected date variable
-    const selectedStartTime = event.target.value; // Replace 'startTime' with the selected start time variable
+    const selectedStartTime = event.target.value; 
+    // Replace 'startTime' with the selected start time variable
   setStartTime(selectedStartTime);
     fetch(`/available-endtimes/${selectedDate}/${selectedStartTime}/${space}`)
       .then((response) => response.json())
@@ -506,7 +507,8 @@ const tableHeaderStyle = {
   color:'black',
   position: 'sticky',
   top: 0,
-  
+ 
+  background: 'linear-gradient(to bottom, #4f4091, #ffcc00)',
 };
 
 // Inline styles for table cells

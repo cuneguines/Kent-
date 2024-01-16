@@ -22,7 +22,7 @@ function NEW() {
 
     // Make a POST request to the backend with the login credentials
     axios
-      .post('http://127.0.0.1:5000/api/login', { username, password })
+      .post('/api/login', { username, password })
       .then((response) => {
         const data = response.data;
         // Handle the response from the backend

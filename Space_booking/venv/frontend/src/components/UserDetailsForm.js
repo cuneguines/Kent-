@@ -15,7 +15,7 @@ function UserDetailsForm() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/users');
+      const response = await fetch('/api/users');
       const data = await response.json();
       
       setUsers(data);
@@ -44,7 +44,7 @@ function UserDetailsForm() {
 
     if (shouldSubmit) {
       axios
-        .post('http://127.0.0.1:5000/api/user', { fname: firstName, lname: lastName, email })
+        .post('/api/user', { fname: firstName, lname: lastName, email })
         .then((response) => {
           const data = response.data;
           if (data.success) {
@@ -67,7 +67,7 @@ function UserDetailsForm() {
 
   const handleDelete = (userId) => {
     axios
-      .delete(`http://127.0.0.1:5000/api/delete/user/${userId}`)
+      .delete(`/api/delete/user/${userId}`)
       .then((response) => {
         const data = response.data;
         if (data.success) {

@@ -1,0 +1,6 @@
+@echo off
+echo Activating virtual environment...
+call C:\Users\cnixon\AppData\Roaming\Python\Python311\KENT\Space_booking\venv\Scripts\activate
+
+echo Running Python script...
+python app.py

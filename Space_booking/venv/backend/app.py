@@ -169,7 +169,7 @@ def add_booking():
 def delete_booking(booking_id):
     conn = get_db()
     cursor = conn.cursor()
-
+    print(booking_id)
     delete_query = "DELETE FROM booking_clone WHERE id = ?"
     cursor.execute(delete_query, (booking_id,))
     cursor.close()
@@ -184,7 +184,7 @@ def get_available_times(date, space):
     conn = get_db()
     item = ['08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00', '12:00:00', '12:30:00', '13:00:00', '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00']
     new_list = []
-
+    
     cursor = conn.cursor()
 
     date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
@@ -193,14 +193,15 @@ def get_available_times(date, space):
     cursor.execute(query, (space, date,))
     available_times = [str(row[0]) for row in cursor.fetchall()]
 
+    
     for element in item:
         if element not in available_times:
             new_list.append(element)
 
     cursor.close()
-
+    print(new_list)
     return jsonify(new_list)
-
+    
 
 @app.route('/available-endtimes/<date>/<start_time>/<space>', methods=['GET'])
 def get_available_endtimes(date, start_time, space):
@@ -323,7 +324,34 @@ def get_users():
         return jsonify(users)
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
+# Function to delete records older than two weeks
+def delete_old_records():
+    try:
+        # Connect to the SQLite database
+        conn = sqlite3.connect('space_booking.db')
+        cursor = conn.cursor()
 
+        # Calculate the date two weeks ago from today
+        two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
+
+        # Convert the date to the format used in the database (YYYY-MM-DD)
+        two_weeks_ago_str = two_weeks_ago.strftime("%Y-%m-%d")
+
+        # SQL query to delete records older than two weeks
+        delete_query = "DELETE FROM booking_clone WHERE date < ?"
+        cursor.execute(delete_query, (two_weeks_ago_str,))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        # Close the database connection
+        conn.close()
+
+        print("Old records deleted successfully.")
+
+    except Exception as e:
+        print("Error:", str(e))
 
 if __name__ == '__main__':
-    app.run()
+    delete_old_records()
+    app.run(port=8000)

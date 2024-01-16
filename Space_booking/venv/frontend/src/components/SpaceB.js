@@ -17,10 +17,28 @@ for (let i = 0; i < 28; i++) {
   daysOfWeek.push(formattedDate);
   console.log(formattedDate);
 }
+const LoadingAnimation = () => {
+  const [dots, setDots] = useState('');
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setDots(prevDots => (prevDots.length >= 3 ? '' : prevDots + '.'));
+    }, 500);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return (
+    <div className="loading-message">
+      Booking{dots}
+    </div>
+  );
+};
 
 const SpaceB = () => {
 
+  const [isLoading, setLoading] = useState(false);
 
   const [highlightedCell, setHighlightedCell] = useState(null);
 
@@ -99,7 +117,7 @@ const SpaceB = () => {
     const selectedDate = date; // Replace 'date' with the selected date variable
     const selectedStartTime = event.target.value; // Replace 'startTime' with the selected start time variable
   setStartTime(selectedStartTime);
-    fetch(`/available-endtimes/${selectedDate}/${selectedStartTime}/${'Space B'}`)
+    fetch(`http://127.0.0.1:8000/available-endtimes/${selectedDate}/${selectedStartTime}/${'Space B'}`)
       .then((response) => response.json())
       .then((data) => {
         setEndTimeOptions(data);
@@ -117,7 +135,7 @@ const SpaceB = () => {
     console.log(selectedDate);
     console.log(space);
 
-    fetch(`/available-times/${selectedDate}/${'Space B'}`)
+    fetch(`http://127.0.0.1:8000/available-times/${selectedDate}/${'Space B'}`)
       .then((response) => response.json())
       .then((data) => {
         setAvailableTimes(data);
@@ -273,7 +291,7 @@ console.log('newbookingis',newBooking);
     console.log(startTime);
     console.log(endTime);
     console.log(date);
-    alert('yes');
+    //alert('yes');
     if (name && space && startTime && endTime && date) {
       const newBooking = {
         id: bookings.length + 1,
@@ -284,20 +302,27 @@ console.log('newbookingis',newBooking);
         endTime,
         day,
       };
-
-      console.log('newbookingis', newBooking);
-
+      setLoading(true);
+      //console.log('newbookingis', newBooking);
+try{
       request
         .post(`/api/bookings`)
         .send(newBooking)
         .set('Content-Type', 'application/json')
         .then((response) => {
           setData([...bookings, response.body]);
-          alert(response.body);
-          window.location.reload();
+          //alert(response.body);
+        
         })
         .catch((error) => console.log(error));
-    }
+    }finally {
+      // Automatically hide the loading message after 3 seconds
+      setTimeout(() => {
+        setLoading(false);
+        window.location.reload();
+      }, 5000); // 3000 milliseconds (3 seconds)
+      //window.location.reload();
+    }}
   };
 
   //DELETE
@@ -400,9 +425,11 @@ console.log('newbookingis',newBooking);
           </label>
 
 
+          
 
 
           <button className="submit-button"style={{ backgroundColor: 'orange' }} type="submit">Add Booking</button>
+          {isLoading && <LoadingAnimation />} 
         </form>
       </div>
       
@@ -411,7 +438,7 @@ console.log('newbookingis',newBooking);
 
           <thead>
             <tr>
-              <th></th> {/* Empty cell for spacing */}
+              <th style={keyStyle}></th> {/* Empty cell for spacing */}
               {daysOfWeek.map((day, index) => (
 
                 <th style={tableHeaderStyle} key={index}>
@@ -423,7 +450,7 @@ console.log('newbookingis',newBooking);
           <tbody>
             {timeSlots.map(timeSlot => (
 
-              <tr key={timeSlot}>
+              <tr style={keyStyle} key={timeSlot}>
                 <td style={tableCellStyle}>{timeSlot}</td>
                 {daysOfWeek.map(day => {
                   const booking = filteredBookings.find(
@@ -480,7 +507,7 @@ const tableHeaderStyle = {
   padding: '4px',
   borderBottom: '1px solid #ddd',
   textAlign: 'left',
-  fontSize: '8px',
+  fontSize: '10px',
   boxShadow: '-1px -1px 6px green, 0 3px 12px 20px rgba(0, 0, 0, 0.23)',
   color:'black',
   position: 'sticky',
@@ -493,9 +520,31 @@ const tableCellStyle = {
   padding: '4px',
   borderBottom: '1px solid #ddd',
   fontFamily:'Sans',
-  fontSize:'smaller',
+  fontSize:'medium',
   color:'black',
 }
+const keyStyle = {
+  padding: '4px',
+  borderBottom: '1px solid #ddd',
+  fontFamily:'Sans',
+  fontSize:'medium',
+  color:'white',
+  background: 'linear-gradient(#4f4091,#ffcc00)',
+    
+    // You can adjust the gradient direction and colors as needed
+ 
+
+}
+const loadingMessageStyle = {
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  padding: '16px',
+  borderRadius: '8px',
+  boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+};
 
 
 
