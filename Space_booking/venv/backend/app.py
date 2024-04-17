@@ -4,6 +4,7 @@ import sqlite3
 import datetime
 import threading
 from datetime import timedelta,time
+import calendar
 
 app = Flask(__name__)
 CORS(app, origins='http://localhost:3000')
@@ -351,7 +352,38 @@ def delete_old_records():
 
     except Exception as e:
         print("Error:", str(e))
+def add_recurring_bookings():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Specify the details for the recurring booking
+    new_name = "Conor Clarke"
+    space = "Space A"
+    startTime = "09:30:00"
+    endTime = "10:00:00"
+    Date_today = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Start and end dates for the recurring bookings
+    start_date = datetime.datetime.strptime("2024-03-21", "%Y-%m-%d")  # Start date
+    end_date = datetime.datetime.strptime("2024-12-31", "%Y-%m-%d")    # End date
+
+    # Loop through each Monday within the date range
+    current_date = start_date
+    while current_date <= end_date:
+        if current_date.weekday() == calendar.MONDAY:  # Check if it's a Monday
+            # Insert the booking for this Monday
+            date = current_date.strftime("%Y-%m-%d")
+            day = current_date.strftime("%A")
+            insert_query = "INSERT INTO booking_clone (new_name, date, space, startTime, endTime, Date_today, day) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            cursor.execute(insert_query, (new_name, date, space, startTime, endTime, Date_today, day))
+
+        # Move to the next day
+        current_date += timedelta(days=1)
+
+    conn.commit()
+    cursor.close()
 
 if __name__ == '__main__':
     delete_old_records()
+    add_recurring_bookings()
     app.run(port=8000)

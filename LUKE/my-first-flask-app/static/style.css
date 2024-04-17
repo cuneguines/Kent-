@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: rgb(213, 228, 170);
+}
+
+.header {
+    padding-inline-start: 3em;
+    background-color: rgb(134, 179, 100);
+    padding-block: 1em;
+    box-shadow: 0px 0px 18px #1415157b;
+}
+
+#title {
+    font-size: 3em;
+}
